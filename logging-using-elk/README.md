@@ -37,3 +37,8 @@
 * [JsonTemplate - better personalization of the logger layout.](https://logging.apache.org/log4j/2.x/manual/json-template-layout.html)
 * [Json-logger - an abandoned MuleSoft plugin. Fork it to make it work!](https://github.com/mulesoft-consulting/json-logger)
 * [Old how-to from MuleSoft](https://blogs.mulesoft.com/dev-guides/how-to-tutorials/json-logging-mule-4/)
+
+---
+#### find me @
+* [linkedin](https://www.linkedin.com/in/leszek-gersztyn-a97240156/)
+* [gitHub](https://github.com/LeszekGersztyn)
