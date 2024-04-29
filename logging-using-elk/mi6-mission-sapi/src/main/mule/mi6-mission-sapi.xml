@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="mi6-mission" doc:id="01f9ace6-b8b0-43e9-b52d-9ec476fb336b" >
+		<http:listener doc:name="Listener" doc:id="c7931b38-ad5c-4665-9173-4cc279385b50" config-ref="MI6_Listener_config" path="/mission"/>
+		<logger level="INFO" doc:name="Logger" doc:id="5f2102c5-d680-4b13-a084-47f4dd6af783" message='#["Recieved mission request"]'/>
+		<logger level="INFO" doc:name="Logger" doc:id="647e03f9-83d4-4146-99ec-7d7e5c21897d" message='#["Processing mission request"]'/>
+		<logger level="WARN" doc:name="Logger" doc:id="c6991a5f-4d89-4498-bb3e-26f385563eed" message='#["Changing gun form " ++ payload.gun ++ " to Walter PPK"]'/>
+		<set-payload value='#[{&#10;	"status": "ACCEPTED",&#10;	mission: payload.mission&#10;}]' doc:name="Set Payload" doc:id="968a41c0-7f74-4a46-ac67-97e6e8ded332" />
+	</flow>
+</mule>

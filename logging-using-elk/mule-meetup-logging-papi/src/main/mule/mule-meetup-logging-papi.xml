@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="mule-meetup-logging-papiFlow" doc:id="a1efb777-948f-4c49-bb57-d245eeae6f02" >
+		<scheduler doc:name="Scheduler" doc:id="30b344ff-16a6-434a-9812-aaf23275b7b4" >
+			<scheduling-strategy >
+				<fixed-frequency frequency="1" timeUnit="MINUTES"/>
+			</scheduling-strategy>
+		</scheduler>
+		<set-variable value="#[mod(now() as Number, 10) == 0]" doc:name="IsAgencyAvaiable" doc:id="25e6c4ec-c423-4536-9fb6-d4315ca770ba" variableName="IsAgencyAvaiable"/>
+		<set-variable value="#[mod(now() as Number, 2) &lt; 1]" doc:name="isBond" doc:id="8a9476d0-ff4b-4678-bbc6-5325087c735d" variableName="isBond"/>
+		<choice doc:name="Choice" doc:id="69fd426d-9738-4a37-8b4e-44fa0bf90bbd" >
+			<when expression="#[vars.IsAgencyAvaiable]">
+				<raise-error doc:name="Raise error" doc:id="001dea7a-7128-4f38-bea6-c89dec442828" type="APP:AGENCY" description="No agency avaiavle"/>
+			</when>
+			<when expression="#[vars.isBond]" >
+				<logger level="INFO" doc:name="Logger" doc:id="e570f591-1bea-4436-9dd3-f0541149be75" message='#["My name is Bond, James Bond"]' />
+				<set-payload doc:name="Set Payload" doc:id="7a1603e2-acb5-4822-a80b-8a2ceb8ab015" value='#[output application/json&#10;---&#10;{&#10;	name: "James Bond",&#10;	mission: "Goldfinger",&#10;	password: "AstonMartinDB9",&#10;	gun: "Beretta",&#10;	car: "Aston Martin",&#10;	code: "007"&#10;}]' />
+				<logger level="INFO" doc:name="Logger" doc:id="620df6f0-507a-43b9-b50e-21300dfc8904" message='#["Sending mission information"]' />
+				<http:request method="POST" doc:name="MI6Request" doc:id="245abd87-2325-40f6-a3fa-bfe3b499ebbc" config-ref="MI6_Request_configuration" path="/mission" sendCorrelationId="ALWAYS" correlationId="#[correlationId]"/>
+				<logger level="INFO" doc:name="Logger" doc:id="7d9860f9-09e4-46e5-8f0d-5010d369309d" message='#["Mission " ++ payload.mission ++ " " ++ payload.status]' />
+			</when>
+			<otherwise >
+				<set-payload value='#[output application/json&#10;---&#10;{&#10;	name: "Porucznik Borewicz",&#10;	mission: "Wagon pocztowy",&#10;	password: "GaciePoTacie",&#10;	gun: "Tak",&#10;	car: "Polonez",&#10;	code: "07"&#10;}]' doc:name="Set Payload" doc:id="26ef8307-6ac8-46a9-91c4-9f9b3b21161a" />
+				<logger level="INFO" doc:name="Logger" doc:id="e69a1a80-f430-4530-ae6f-218914a8a70a" message='#["Sending mission information"]' />
+				<http:request method="POST" doc:name="MORequest" doc:id="4db19ff4-a437-45d6-8eef-5c052fda9649" config-ref="MO_Request_configuration" path="/mission" sendCorrelationId="ALWAYS" correlationId="#[correlationId]"/>
+				<logger level="INFO" doc:name="Logger" doc:id="24c8c844-4953-4a2f-a154-49cbd8770297" message='#["Mission " ++ payload.mission ++ " " ++ payload.status]' />
+			</otherwise>
+		</choice>
+		<set-variable value='#[payload.status == "ACCEPTED"]' doc:name="isAccepted" doc:id="c9b23d43-f3ff-449e-9632-c3d0016d9ffd" variableName="isAccepted"/>
+		<choice doc:name="Choice" doc:id="da5d8cbb-61c2-4f7d-8a85-8940ddf0eb49" >
+			<when expression="#[vars.isAccepted]">
+				<logger level="INFO" doc:name="Logger" doc:id="a4461ad0-5239-4517-95d1-7883a28adb3c" message="Sending departure request"/>
+				<http:request method="POST" doc:name="Request" doc:id="39be4982-88f0-4149-b10e-f80bfc7f487c" config-ref="departure_Request_configuration" path="/departure" sendCorrelationId="ALWAYS" correlationId="#[correlationId]"/>
+			</when>
+			<otherwise >
+				<logger level="WARN" doc:name="Logger" doc:id="6c976c03-5f3d-435c-a48f-11f1540ead96" message='#["Mission " ++ payload.mission ++ " rejected"]' />
+			</otherwise>
+		</choice>
+		<error-handler >
+			<on-error-propagate enableNotifications="false" logException="false" doc:name="On Error Propagate" doc:id="5bb34f8d-da5f-4776-a922-9387079db98f" type="APP:AGENCY">
+				<logger level="ERROR" doc:name="Logger" doc:id="9218decb-4aac-43f9-92c9-95b49e2c1b3e" message="#[error.description]"/>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+</mule>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:request-config name="MI6_Request_configuration" doc:name="HTTP Request configuration" doc:id="bbc6f527-6fb3-420c-a3b5-a4b66372ee53" >
+		<http:request-connection host="localhost" port="8083" />
+	</http:request-config>
+	<http:request-config name="MO_Request_configuration" doc:name="HTTP Request configuration" doc:id="d8f96545-92b5-4c78-a560-cd5343d70d5e" >
+		<http:request-connection host="localhost" port="8084" />
+	</http:request-config>
+	<http:request-config name="departure_Request_configuration" doc:name="HTTP Request configuration" doc:id="05529c03-c531-45c0-9470-37ff19446a80" >
+		<http:request-connection host="0.0.0.0" port="8085" />
+	</http:request-config>
+</mule>

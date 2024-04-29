@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="mo-mission" doc:id="cbd833a3-33c3-4cd5-9f12-2151a6d86f13" >
+		<http:listener doc:name="Listener" doc:id="48a5bbe8-f86b-4b08-bfb8-88a65e37c4a8" config-ref="MO_Listener_config" path="/mission" />
+		<logger level="INFO" doc:name="Logger" doc:id="36fef1c3-55bb-4d1d-a61c-0114126d8ac4" message='#["Recieved mission request"]' />
+		<logger level="INFO" doc:name="Logger" doc:id="c6a1c2c8-1412-49d8-8441-d6946dad15a1" message='#["Processing mission request"]' />
+		<set-variable value="#[mod(now() as Number, 2) &lt; 1]" doc:name="hasResources" doc:id="15126fdc-0750-4e3c-a2d5-e9222e96a915" variableName="hasResources"/>
+		<choice doc:name="Choice" doc:id="597f3924-41d9-40ed-aeb0-a6b9682b3c91" >
+			<when expression="#[vars.hasResources]">
+				<set-payload value='#[{&#10;	"status": "ACCEPTED",&#10;	mission: payload.mission&#10;}]' doc:name="Set Payload" doc:id="698b46f2-a275-40de-b53f-ae35e7b35d85" />
+			</when>
+			<otherwise >
+				<set-payload value='#[{&#10;	"status": "DENIED",&#10;	mission: payload.mission&#10;}]' doc:name="Set Payload" doc:id="17487ec1-c02d-4a96-ac96-dd001ae0f8df" />
+			</otherwise>
+		</choice>
+	</flow>
+</mule>
